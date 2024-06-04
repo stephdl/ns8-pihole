@@ -1,0 +1,42 @@
+#
+# Copyright (C) 2022 Nethesis S.r.l.
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+[Unit]
+Description=Podman  pihole-app.service
+BindsTo=pihole.service
+After=pihole.service mariadb-app.service
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+EnvironmentFile=%S/state/environment
+EnvironmentFile=-%S/state/smarthost.env
+WorkingDirectory=%S/state
+Restart=always
+TimeoutStopSec=70
+ExecStartPre=/bin/mkdir -p tmp
+ExecStartPre=/bin/rm -f %t/pihole-app.pid %t/pihole-app.ctr-id
+ExecStartPre=-runagent discover-smarthost
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/pihole-app.pid \
+    --cidfile %t/pihole-app.ctr-id --cgroups=no-conmon \
+    --pod-id-file %t/pihole.pod-id --replace -d --name  pihole-app \
+    --volume pihole-app:/var/www/html/:Z \
+    --volume ./tmp:/tmp:Z \
+    --env=MARIADB_* \
+    --env MARIADB_DB_TYPE=mysql \
+    --env MARIADB_DB_HOST=127.0.0.1 \
+    --env MARIADB_DB_PORT=3306 \
+    --env MARIADB_DB_USER=pihole \
+    --env MARIADB_DB_PASSWORD=pihole \
+    --env MARIADB_DB_NAME=pihole \
+    ${NGINX_IMAGE}
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/pihole-app.ctr-id -t 10
+ExecReload=/usr/bin/podman kill -s HUP pihole-app
+SyslogIdentifier=%u
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/pihole-app.ctr-id
+PIDFile=%t/pihole-app.pid
+Type=forking
+
+[Install]
+WantedBy=default.target
