@@ -10,8 +10,8 @@
 
 [Unit]
 Description=Podman pihole.service
-Requires=mariadb-app.service pihole-app.service
-Before=mariadb-app.service pihole-app.service
+Requires=pihole-app.service
+Before=pihole-app.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
