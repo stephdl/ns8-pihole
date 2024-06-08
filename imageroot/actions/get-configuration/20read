@@ -43,6 +43,7 @@ pihole_running = subprocess.run(['systemctl', '--user', 'is-active', "pihole-app
 config['pihole_is_running'] = True if pihole_running.stdout.strip() == 'active' else False
 
 config["dns_ports_bound"] = are_ports_53_bound()
+config["webpassword"] = os.getenv("WEBPASSWORD","Nethesis,1234")
 
 # Dump the configuration to stdout
 json.dump(config, fp=sys.stdout)
