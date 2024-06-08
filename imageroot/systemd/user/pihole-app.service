@@ -22,7 +22,7 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/pihole-app.pid \
     --pod-id-file %t/pihole.pod-id --replace -d --name  pihole-app \
     --volume etc:/etc \
     --env TZ="UTC" \
-    --env WEBPASSWORD='azerty'  \
+    --env WEBPASSWORD="${WEBPASSWORD}" \
     --env VIRTUAL_HOST="${TRAEFIK_HOST}" \
     --env IPv6="false" \
     --env dns="127.0.0.1" \
