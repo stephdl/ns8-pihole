@@ -1,19 +1,19 @@
 {
   "name": "pihole",
   "description": {
-    "en": "My pihole module"
+    "en": "Pi-hole is a Linux network-level advertisement and Internet tracker blocking application which acts as a DNS sinkhole"
   },
   "categories": [],
   "authors": [
     {
-      "name": "Name Surname",
-      "email": "author@yourmail.org"
+      "name": "Stephane de Labrusse",
+      "email": "stephdl@de-labrusse.fr"
     }
   ],
   "docs": {
-    "documentation_url": "https://docs.pihole.com/",
-    "bug_url": "https://github.com/NethServer/dev",
-    "code_url": "https://github.com/author/ns8-pihole"
+    "documentation_url": "https://docs.pi-hole.net/",
+    "bug_url": "https://github.com/stephdl/dev",
+    "code_url": "https://github.com/stephdl/ns8-pihole"
   },
-  "source": "ghcr.io/nethserver/pihole"
+  "source": "ghcr.io/stephdl/pihole"
 }
