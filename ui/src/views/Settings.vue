@@ -87,7 +87,32 @@
             <cv-accordion ref="accordion" class="maxwidth mg-bottom">
               <cv-accordion-item :open="toggleAccordion[0]">
                 <template slot="title">{{ $t("settings.advanced") }}</template>
-                <template slot="content"> </template>
+                <template slot="content">
+                  <cv-text-input
+                    :label="$t('settings.dns_server1')"
+                    placeholder="9.9.9.9"
+                    v-model.trim="dns1"
+                    class="mg-bottom"
+                    :invalid-message="$t(error.dns1)"
+                    :disabled="
+                      loading.getConfiguration || loading.configureModule
+                    "
+                    ref="dns1"
+                  >
+                  </cv-text-input>
+                  <cv-text-input
+                    :label="$t('settings.dns_server2')"
+                    placeholder="8.8.8.8"
+                    v-model.trim="dns2"
+                    class="mg-bottom"
+                    :invalid-message="$t(error.dns2)"
+                    :disabled="
+                      loading.getConfiguration || loading.configureModule
+                    "
+                    ref="dns2"
+                  >
+                  </cv-text-input>
+                </template>
               </cv-accordion-item>
             </cv-accordion>
             <cv-row v-if="error.configureModule">
@@ -149,6 +174,8 @@ export default {
       urlCheckInterval: null,
       host: "",
       webpassword: "",
+      dns1: "",
+      dns2: "",
       pihole_is_running: false,
       dns_ports_bound: false,
       isLetsEncryptEnabled: false,
@@ -164,6 +191,8 @@ export default {
         lets_encrypt: "",
         http2https: "",
         webpassword: "",
+        dns1: "",
+        dns2: "",
       },
     };
   },
@@ -234,6 +263,8 @@ export default {
       this.pihole_is_running = config.pihole_is_running;
       this.dns_ports_bound = config.dns_ports_bound;
       this.webpassword = config.webpassword;
+      this.dns1 = config.dns1;
+      this.dns2 = config.dns2;
       this.loading.getConfiguration = false;
       this.focusElement("host");
     },
@@ -310,7 +341,9 @@ export default {
             host: this.host,
             lets_encrypt: this.isLetsEncryptEnabled,
             http2https: this.isHttpToHttpsEnabled,
-            webpassword: this.webpassword,  
+            webpassword: this.webpassword,
+            dns1: this.dns1,
+            dns2: this.dns2,
           },
           extra: {
             title: this.$t("settings.instance_configuration", {
