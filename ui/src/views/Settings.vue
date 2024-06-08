@@ -19,6 +19,16 @@
         />
       </cv-column>
     </cv-row>
+    <cv-row v-if="dns_ports_bound && !pihole_is_running">
+      <cv-column>
+        <NsInlineNotification
+          kind="warning"
+          :title="$t('settings.dns_server_is_running')"
+          :description="$t('settings.dns_server_is_running_description')"
+          :showCloseButton="false"
+        />
+      </cv-column>
+    </cv-row>
     <cv-row>
       <cv-column>
         <cv-tile light>
@@ -82,7 +92,11 @@
               kind="primary"
               :icon="Save20"
               :loading="loading.configureModule"
-              :disabled="loading.getConfiguration || loading.configureModule"
+              :disabled="
+                loading.getConfiguration ||
+                loading.configureModule ||
+                (dns_ports_bound && !pihole_is_running)
+              "
               >{{ $t("settings.save") }}</NsButton
             >
           </cv-form>
@@ -122,6 +136,8 @@ export default {
       },
       urlCheckInterval: null,
       host: "",
+      pihole_is_running: false,
+      dns_ports_bound: false,
       isLetsEncryptEnabled: false,
       isHttpToHttpsEnabled: true,
       loading: {
@@ -201,6 +217,8 @@ export default {
       this.host = config.host;
       this.isLetsEncryptEnabled = config.lets_encrypt;
       this.isHttpToHttpsEnabled = config.http2https;
+      this.pihole_is_running = config.pihole_is_running;
+      this.dns_ports_bound = config.dns_ports_bound;
 
       this.loading.getConfiguration = false;
       this.focusElement("host");
