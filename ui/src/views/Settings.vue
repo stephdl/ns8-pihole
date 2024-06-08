@@ -71,6 +71,18 @@
                 $t("settings.enabled")
               }}</template>
             </cv-toggle>
+            <cv-text-input
+              :label="$t('settings.auth_password')"
+              placeholder="Nethesis,1234"
+              type="password"
+              min="8"
+              v-model.trim="webpassword"
+              class="mg-bottom"
+              :invalid-message="$t(error.webpassword)"
+              :disabled="loading.getConfiguration || loading.configureModule"
+              ref="webpassword"
+            >
+            </cv-text-input>
             <!-- advanced options -->
             <cv-accordion ref="accordion" class="maxwidth mg-bottom">
               <cv-accordion-item :open="toggleAccordion[0]">
@@ -136,6 +148,7 @@ export default {
       },
       urlCheckInterval: null,
       host: "",
+      webpassword: "",
       pihole_is_running: false,
       dns_ports_bound: false,
       isLetsEncryptEnabled: false,
@@ -150,6 +163,7 @@ export default {
         host: "",
         lets_encrypt: "",
         http2https: "",
+        webpassword: "",
       },
     };
   },
@@ -219,7 +233,7 @@ export default {
       this.isHttpToHttpsEnabled = config.http2https;
       this.pihole_is_running = config.pihole_is_running;
       this.dns_ports_bound = config.dns_ports_bound;
-
+      this.webpassword = config.webpassword;
       this.loading.getConfiguration = false;
       this.focusElement("host");
     },
@@ -288,6 +302,7 @@ export default {
             host: this.host,
             lets_encrypt: this.isLetsEncryptEnabled,
             http2https: this.isHttpToHttpsEnabled,
+            webpassword: this.webpassword,  
           },
           extra: {
             title: this.$t("settings.instance_configuration", {
