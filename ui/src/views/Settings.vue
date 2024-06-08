@@ -249,6 +249,14 @@ export default {
         }
         isValidationOk = false;
       }
+      if (!this.webpassword) {
+        this.error.host = "common.required";
+
+        if (isValidationOk) {
+          this.focusElement("webpassword");
+        }
+        isValidationOk = false;
+      }
       return isValidationOk;
     },
     configureModuleValidationFailed(validationErrors) {
