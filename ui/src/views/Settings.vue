@@ -281,7 +281,7 @@ export default {
         isValidationOk = false;
       }
       if (!this.webpassword) {
-        this.error.host = "common.required";
+        this.error.webpassword = "common.required";
 
         if (isValidationOk) {
           this.focusElement("webpassword");
