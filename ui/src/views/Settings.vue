@@ -31,6 +31,16 @@
     </cv-row>
     <cv-row>
       <cv-column>
+        <NsInlineNotification
+          kind="info"
+          :title="$t('settings.no_dhcp_server')"
+          :description="$t('settings.no_dhcp_server_description')"
+          :showCloseButton="false"
+        />
+      </cv-column>
+    </cv-row>
+    <cv-row>
+      <cv-column>
         <cv-tile light>
           <cv-form @submit.prevent="configureModule">
             <cv-text-input
