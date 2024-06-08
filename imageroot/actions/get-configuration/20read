@@ -13,6 +13,8 @@ import os
 import sys
 import json
 import agent
+import socket
+import subprocess
 
 # Prepare return variable
 config = {}
@@ -21,6 +23,26 @@ config = {}
 config["host"] = os.getenv("TRAEFIK_HOST","")
 config["http2https"] = os.getenv("TRAEFIK_HTTP2HTTPS") == "True"
 config["lets_encrypt"] = os.getenv("TRAEFIK_LETS_ENCRYPT") == "True"
+
+def is_port_bound(port, protocol, ip='127.0.0.1'):
+    """Check if a port is already bound for a given protocol (TCP/UDP) on a specific IP address."""
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM if protocol == 'tcp' else socket.SOCK_DGRAM)
+    try:
+        s.bind((ip, port))
+        s.close()
+        return False
+    except OSError:
+        return True
+
+def are_ports_53_bound(ip='127.0.0.1'):
+    """Check if both TCP and UDP ports 53 are bound on a specific IP address."""
+    return is_port_bound(53, 'tcp', ip) and is_port_bound(53, 'udp', ip)
+
+# check if the piler service is running
+pihole_running = subprocess.run(['systemctl', '--user', 'is-active', "pihole-app.service"], capture_output=True, text=True)
+config['pihole_is_running'] = True if pihole_running.stdout.strip() == 'active' else False
+
+config["dns_ports_bound"] = are_ports_53_bound()
 
 # Dump the configuration to stdout
 json.dump(config, fp=sys.stdout)
