@@ -39,6 +39,7 @@
     "domain_already_used_in_traefik": "Domain already used in traefik",
     "host_pattern": "Must be a valid fully qualified domain name",
     "host_format": "Must be a valid fully qualified domain name",
+    "auth_password": "Password",
     "dns_server_is_running": "A DNS server is running",
     "dns_server_is_running_description": "You cannot configure pihole if a DNS server is already running on this node. A module like samba or dnsmasq may be using the DNS port."
   },
