@@ -13,3 +13,5 @@ data = json.load(sys.stdin)
 
 # this values must exists in the json stdin
 agent.set_env("WEBPASSWORD", data["webpassword"])
+agent.set_env("DNS1", data["dns1"])
+agent.set_env("DNS2", data["dns2"])
