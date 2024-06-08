@@ -19,7 +19,7 @@
         />
       </cv-column>
     </cv-row>
-    <cv-row v-if="dns_ports_bound && !pihole_is_running">
+    <cv-row v-if="dns_ports_bound && !pihole_is_configured">
       <cv-column>
         <NsInlineNotification
           kind="warning"
@@ -132,7 +132,7 @@
               :disabled="
                 loading.getConfiguration ||
                 loading.configureModule ||
-                (dns_ports_bound && !pihole_is_running)
+                (dns_ports_bound && !pihole_is_configured)
               "
               >{{ $t("settings.save") }}</NsButton
             >
@@ -176,7 +176,7 @@ export default {
       webpassword: "",
       dns1: "",
       dns2: "",
-      pihole_is_running: false,
+      pihole_is_configured: false,
       dns_ports_bound: false,
       isLetsEncryptEnabled: false,
       isHttpToHttpsEnabled: true,
@@ -260,7 +260,7 @@ export default {
       this.host = config.host;
       this.isLetsEncryptEnabled = config.lets_encrypt;
       this.isHttpToHttpsEnabled = config.http2https;
-      this.pihole_is_running = config.pihole_is_running;
+      this.pihole_is_configured = config.pihole_is_configured;
       this.dns_ports_bound = config.dns_ports_bound;
       this.webpassword = config.webpassword;
       this.dns1 = config.dns1;

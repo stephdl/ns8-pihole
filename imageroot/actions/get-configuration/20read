@@ -39,8 +39,7 @@ def are_ports_53_bound(ip='127.0.0.1'):
     return is_port_bound(53, 'tcp', ip) and is_port_bound(53, 'udp', ip)
 
 # check if the piler service is running
-pihole_running = subprocess.run(['systemctl', '--user', 'is-active', "pihole-app.service"], capture_output=True, text=True)
-config['pihole_is_running'] = True if pihole_running.stdout.strip() == 'active' else False
+config['pihole_is_configured'] = True if os.getenv("WEBPASSWORD","") != "" else False
 
 config["dns_ports_bound"] = are_ports_53_bound()
 config["webpassword"] = os.getenv("WEBPASSWORD","Nethesis,1234")
