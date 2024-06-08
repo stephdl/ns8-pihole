@@ -19,13 +19,23 @@
         />
       </cv-column>
     </cv-row>
+    <cv-row v-if="dns_ports_bound && !pihole_is_configured">
+      <cv-column>
+        <NsInlineNotification
+          kind="warning"
+          :title="$t('settings.dns_server_is_running')"
+          :description="$t('settings.dns_server_is_running_description')"
+          :showCloseButton="false"
+        />
+      </cv-column>
+    </cv-row>
     <cv-row>
       <cv-column>
         <cv-tile light>
           <cv-form @submit.prevent="configureModule">
             <cv-text-input
-              :label="$t('settings.kickstart_fqdn')"
-              placeholder="kickstart.example.org"
+              :label="$t('settings.pihole_fqdn')"
+              placeholder="pihole.example.org"
               v-model.trim="host"
               class="mg-bottom"
               :invalid-message="$t(error.host)"
@@ -61,11 +71,47 @@
                 $t("settings.enabled")
               }}</template>
             </cv-toggle>
-              <!-- advanced options -->
+            <cv-text-input
+              :label="$t('settings.auth_password')"
+              placeholder="Nethesis,1234"
+              type="password"
+              min="8"
+              v-model.trim="webpassword"
+              class="mg-bottom"
+              :invalid-message="$t(error.webpassword)"
+              :disabled="loading.getConfiguration || loading.configureModule"
+              ref="webpassword"
+            >
+            </cv-text-input>
+            <!-- advanced options -->
             <cv-accordion ref="accordion" class="maxwidth mg-bottom">
               <cv-accordion-item :open="toggleAccordion[0]">
                 <template slot="title">{{ $t("settings.advanced") }}</template>
                 <template slot="content">
+                  <cv-text-input
+                    :label="$t('settings.dns_server1')"
+                    placeholder="9.9.9.9"
+                    v-model.trim="dns1"
+                    class="mg-bottom"
+                    :invalid-message="$t(error.dns1)"
+                    :disabled="
+                      loading.getConfiguration || loading.configureModule
+                    "
+                    ref="dns1"
+                  >
+                  </cv-text-input>
+                  <cv-text-input
+                    :label="$t('settings.dns_server2')"
+                    placeholder="8.8.8.8"
+                    v-model.trim="dns2"
+                    class="mg-bottom"
+                    :invalid-message="$t(error.dns2)"
+                    :disabled="
+                      loading.getConfiguration || loading.configureModule
+                    "
+                    ref="dns2"
+                  >
+                  </cv-text-input>
                 </template>
               </cv-accordion-item>
             </cv-accordion>
@@ -83,7 +129,11 @@
               kind="primary"
               :icon="Save20"
               :loading="loading.configureModule"
-              :disabled="loading.getConfiguration || loading.configureModule"
+              :disabled="
+                loading.getConfiguration ||
+                loading.configureModule ||
+                (dns_ports_bound && !pihole_is_configured)
+              "
               >{{ $t("settings.save") }}</NsButton
             >
           </cv-form>
@@ -123,6 +173,11 @@ export default {
       },
       urlCheckInterval: null,
       host: "",
+      webpassword: "",
+      dns1: "",
+      dns2: "",
+      pihole_is_configured: false,
+      dns_ports_bound: false,
       isLetsEncryptEnabled: false,
       isHttpToHttpsEnabled: true,
       loading: {
@@ -135,6 +190,9 @@ export default {
         host: "",
         lets_encrypt: "",
         http2https: "",
+        webpassword: "",
+        dns1: "",
+        dns2: "",
       },
     };
   },
@@ -202,7 +260,11 @@ export default {
       this.host = config.host;
       this.isLetsEncryptEnabled = config.lets_encrypt;
       this.isHttpToHttpsEnabled = config.http2https;
-
+      this.pihole_is_configured = config.pihole_is_configured;
+      this.dns_ports_bound = config.dns_ports_bound;
+      this.webpassword = config.webpassword;
+      this.dns1 = config.dns1;
+      this.dns2 = config.dns2;
       this.loading.getConfiguration = false;
       this.focusElement("host");
     },
@@ -215,6 +277,14 @@ export default {
 
         if (isValidationOk) {
           this.focusElement("host");
+        }
+        isValidationOk = false;
+      }
+      if (!this.webpassword) {
+        this.error.webpassword = "common.required";
+
+        if (isValidationOk) {
+          this.focusElement("webpassword");
         }
         isValidationOk = false;
       }
@@ -271,6 +341,9 @@ export default {
             host: this.host,
             lets_encrypt: this.isLetsEncryptEnabled,
             http2https: this.isHttpToHttpsEnabled,
+            webpassword: this.webpassword,
+            dns1: this.dns1,
+            dns2: this.dns2,
           },
           extra: {
             title: this.$t("settings.instance_configuration", {
@@ -307,6 +380,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../styles/carbon-utils";
+
 .mg-bottom {
   margin-bottom: $spacing-06;
 }
