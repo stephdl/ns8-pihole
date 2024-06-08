@@ -40,6 +40,8 @@
     "host_pattern": "Must be a valid fully qualified domain name",
     "host_format": "Must be a valid fully qualified domain name",
     "auth_password": "Password",
+    "dns_server1": "Primary DNS server (optionnal)",
+    "dns_server2": "Secondary DNS server (optionnal)",
     "dns_server_is_running": "A DNS server is running",
     "dns_server_is_running_description": "You cannot configure pihole if a DNS server is already running on this node. A module like samba or dnsmasq may be using the DNS port."
   },
