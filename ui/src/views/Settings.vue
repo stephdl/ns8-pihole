@@ -100,7 +100,7 @@
                 <template slot="content">
                   <cv-text-input
                     :label="$t('settings.dns_server1')"
-                    placeholder="9.9.9.9"
+                    :placeholder="$t('settings.optional_dns_server')"
                     v-model.trim="dns1"
                     class="mg-bottom"
                     :invalid-message="$t(error.dns1)"
@@ -112,7 +112,7 @@
                   </cv-text-input>
                   <cv-text-input
                     :label="$t('settings.dns_server2')"
-                    placeholder="8.8.8.8"
+                    :placeholder="$t('settings.optional_dns_server')"
                     v-model.trim="dns2"
                     class="mg-bottom"
                     :invalid-message="$t(error.dns2)"
