@@ -31,6 +31,8 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/pihole-app.pid \
     --env DNS2="${DNS2}" \
     --env DNSMASQ_LISTENING="local" \
     --env=PIHOLE_* \
+    --cap-add=NET_ADMIN \
+    --cap-add=NET_RAW \
     ${PIHOLE_IMAGE}
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/pihole-app.ctr-id -t 10
 ExecReload=/usr/bin/podman kill -s HUP pihole-app
