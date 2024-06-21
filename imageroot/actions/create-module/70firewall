@@ -10,4 +10,5 @@ import agent
 
 agent.assert_exp(agent.add_public_service(os.environ['MODULE_ID'], [
     "53/tcp", "53/udp", # DNS
+    "67/udp", "68/udp", # DHCP
     ]))

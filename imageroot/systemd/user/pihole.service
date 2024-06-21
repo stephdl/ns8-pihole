@@ -24,6 +24,7 @@ ExecStartPre=/usr/bin/podman pod create --infra-conmon-pidfile %t/pihole.pid \
     --name pihole \
     --publish 127.0.0.1:${TCP_PORT}:80 \
     -p 53:53/udp -p 53:53/tcp \
+    -p 67:67/udp -p 68:68/udp \
     --replace
 ExecStart=/usr/bin/podman pod start --pod-id-file %t/pihole.pod-id
 ExecStop=/usr/bin/podman pod stop --ignore --pod-id-file %t/pihole.pod-id -t 10
