@@ -41,9 +41,9 @@
     "host_format": "Must be a valid fully qualified domain name",
     "auth_password": "Password",
     "no_dhcp_server": "Pi-hole's DHCP feature is disabled.",
-    "no_dhcp_server_description": "The DHCP feature of Pi-hole cannot be used. The IP address of the Pi-hole must be assigned by another DHCP server. Ensure that your network's DHCP server is configured to distribute the IP address of the Pi-hole so it can function as a DNS sinkhole.",
+    "no_dhcp_server_description": "The DHCP feature of Pihole cannot be used. The IP address of the server running Pihole must be assigned as the DNS server by another DHCP server. Ensure your network's DHCP server is configured to distribute this IP address for Pihole to function as the DNS sinkhole.",
     "dns_server_is_running": "A DNS server is running",
-    "dns_server_is_running_description": "You cannot configure pihole if a DNS server is already running on this node. A module like samba or dnsmasq may be using the DNS port."
+    "dns_server_is_running_description": "You cannot configure pihole if a DNS server is already running on this node. A module like samba, dnsmasq or another Pihole instance may be using the DNS port."
   },
   "about": {
     "title": "About"
