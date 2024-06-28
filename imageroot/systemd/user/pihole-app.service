@@ -27,8 +27,6 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/pihole-app.pid \
     --env IPv6="true" \
     --env dns="127.0.0.1" \
     --env dns="1.1.1.1" \
-    --env DNS1="${DNS1}" \
-    --env DNS2="${DNS2}" \
     --env DNSMASQ_LISTENING="local" \
     --env=PIHOLE_* \
     ${PIHOLE_IMAGE}
