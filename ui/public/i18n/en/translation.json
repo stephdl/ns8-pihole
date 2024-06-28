@@ -40,8 +40,6 @@
     "host_pattern": "Must be a valid fully qualified domain name",
     "host_format": "Must be a valid fully qualified domain name",
     "auth_password": "Password",
-    "dns_server1": "Primary DNS server (optionnal)",
-    "dns_server2": "Secondary DNS server (optionnal)",
     "no_dhcp_server": "Pi-hole's DHCP feature is disabled.",
     "no_dhcp_server_description": "The DHCP feature of Pi-hole cannot be used. The IP address of the Pi-hole must be assigned by another DHCP server. Ensure that your network's DHCP server is configured to distribute the IP address of the Pi-hole so it can function as a DNS sinkhole.",
     "dns_server_is_running": "A DNS server is running",
