@@ -43,8 +43,6 @@ config['pihole_is_configured'] = True if os.getenv("WEBPASSWORD","") != "" else 
 
 config["dns_ports_bound"] = are_ports_53_bound()
 config["webpassword"] = os.getenv("WEBPASSWORD","Nethesis,1234")
-config["dns1"] = os.getenv("DNS1","")
-config["dns2"] = os.getenv("DNS2","")
 
 # Dump the configuration to stdout
 json.dump(config, fp=sys.stdout)
