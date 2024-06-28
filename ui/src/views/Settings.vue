@@ -49,7 +49,11 @@
               v-model.trim="host"
               class="mg-bottom"
               :invalid-message="$t(error.host)"
-              :disabled="loading.getConfiguration || loading.configureModule"
+              :disabled="
+                loading.getConfiguration ||
+                loading.configureModule ||
+                (dns_ports_bound && !pihole_is_configured)
+              "
               ref="host"
             >
             </cv-text-input>
@@ -57,7 +61,11 @@
               value="letsEncrypt"
               :label="$t('settings.lets_encrypt')"
               v-model="isLetsEncryptEnabled"
-              :disabled="loading.getConfiguration || loading.configureModule"
+              :disabled="
+                loading.getConfiguration ||
+                loading.configureModule ||
+                (dns_ports_bound && !pihole_is_configured)
+              "
               class="mg-bottom"
             >
               <template slot="text-left">{{
@@ -71,7 +79,11 @@
               value="httpToHttps"
               :label="$t('settings.http_to_https')"
               v-model="isHttpToHttpsEnabled"
-              :disabled="loading.getConfiguration || loading.configureModule"
+              :disabled="
+                loading.getConfiguration ||
+                loading.configureModule ||
+                (dns_ports_bound && !pihole_is_configured)
+              "
               class="mg-bottom"
             >
               <template slot="text-left">{{
@@ -89,7 +101,11 @@
               v-model.trim="webpassword"
               class="mg-bottom"
               :invalid-message="$t(error.webpassword)"
-              :disabled="loading.getConfiguration || loading.configureModule"
+              :disabled="
+                loading.getConfiguration ||
+                loading.configureModule ||
+                (dns_ports_bound && !pihole_is_configured)
+              "
               ref="webpassword"
             >
             </cv-text-input>
@@ -174,7 +190,7 @@ export default {
         host: "",
         lets_encrypt: "",
         http2https: "",
-        webpassword: ""
+        webpassword: "",
       },
     };
   },
@@ -321,7 +337,7 @@ export default {
             host: this.host,
             lets_encrypt: this.isLetsEncryptEnabled,
             http2https: this.isHttpToHttpsEnabled,
-            webpassword: this.webpassword
+            webpassword: this.webpassword,
           },
           extra: {
             title: this.$t("settings.instance_configuration", {
