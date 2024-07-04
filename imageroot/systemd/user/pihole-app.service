@@ -11,6 +11,7 @@ After=pihole.service
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
 EnvironmentFile=%S/state/environment
+EnvironmentFile=%S/state/password.env
 WorkingDirectory=%S/state
 Restart=always
 TimeoutStopSec=70

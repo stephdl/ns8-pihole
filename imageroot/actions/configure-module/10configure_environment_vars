@@ -12,4 +12,5 @@ import agent
 data = json.load(sys.stdin)
 
 # this values must exists in the json stdin
-agent.set_env("WEBPASSWORD", data["webpassword"])
+password = {"WEBPASSWORD":data["webpassword"]}
+agent.write_envfile("password.env", password)
