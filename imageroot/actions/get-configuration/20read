@@ -39,10 +39,10 @@ def are_ports_53_bound(ip='127.0.0.1'):
     return is_port_bound(53, 'tcp', ip) and is_port_bound(53, 'udp', ip)
 
 # check if the piler service is running
-config['pihole_is_configured'] = True if os.getenv("WEBPASSWORD","") != "" else False
+config['pihole_is_configured'] = True if os.path.exists("password.env") else False
 
 config["dns_ports_bound"] = are_ports_53_bound()
-config["webpassword"] = os.getenv("WEBPASSWORD","Nethesis,1234")
+config["webpassword"] = agent.read_envfile("password.env")["WEBPASSWORD"] if os.path.exists("password.env") else "Nethesis,1234"
 
 # Dump the configuration to stdout
 json.dump(config, fp=sys.stdout)
