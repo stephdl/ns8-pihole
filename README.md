@@ -2,6 +2,14 @@
 
 Pi-hole is a network-level ad blocker that works by intercepting DNS requests on your network. It blocks ads and unwanted content by filtering out requests to known ad-serving domains, enhancing browsing speed and security for all devices connected to the network.
 
+To use Pi-hole effectively, it must be set as the DNS server for all devices on your network. You can do this in one of two ways:
+
+- Configure the DHCP Server: Set your router's DHCP settings to automatically assign NethServer 8's IP address as the DNS server for all devices. This method is simple and ensures that all devices use Pi-hole without needing manual configuration.
+
+- Manual Configuration: Manually set the DNS server on each device to NethServer 8's IP address. This allows for fine-grained control but is more time-consuming and less consistent across multiple devices.
+
+Using the DHCP server to assign Pi-hole as the DNS is generally the easiest and most reliable approach. Hovewer the Pi-hole's DHCP feature is disabled, you must rely on an external DHCP server, typically your router, to assign network settings to your devices. This means you need to configure the external DHCP server to assign Pi-hole as the DNS server to all devices on your network. Without this configuration, Pi-hole won't be used for DNS queries, and its ad-blocking features won't be effective.
+
 ## Install
 
 Instantiate the module with:
