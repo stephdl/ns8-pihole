@@ -7,14 +7,16 @@
         {
             "host": "pihole.domain.org",
             "http2https": true,
-            "lets_encrypt": true
+            "lets_encrypt": true,
+            "webpassword": "password"
         }
     ],
     "type": "object",
     "required": [
         "host",
         "http2https",
-        "lets_encrypt"
+        "lets_encrypt",
+        "webpassword"
     ],
     "properties": {
         "host": {
@@ -32,6 +34,11 @@
             "type": "boolean",
             "title": "HTTP to HTTPS redirection",
             "description": "Redirect all the HTTP requests to HTTPS"
+        },
+        "webpassword": {
+            "type": "string",
+            "title": "Web password",
+            "description": "Password for the web interface"
         }
     }
 }
