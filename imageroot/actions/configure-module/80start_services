@@ -14,4 +14,23 @@ exec 1>&2
 touch smarthost.env
 
 systemctl --user enable pihole.service
-systemctl --user restart pihole.service
+
+# test if port 53 is already in use by our pid
+port=53
+
+# Find the PID of the process listening on the specified TCP port
+pid=$(ss -tulnp | grep tcp | grep :$port | awk '{print $7}' | awk -F, '{print $2}' | awk -F= '{print $2}' | awk 'NR==1')
+
+if [[ -n $pid ]]; then
+    user=$(ps -p $pid -o user=)
+    # Find the user running the process with the specified PID
+    if [[ $user == $MODULE_ID ]]; then
+        echo "The tcp port is bind to the module ${MODULE_ID}, we restart the pihole service"
+        systemctl --user restart pihole.service
+    else
+        echo "Another container is using the tcp port 53, we do not start the module ${MODULE_ID}"
+    fi
+else
+    echo "no process is running on port 53, we start the module ${MODULE_ID}"
+    systemctl --user restart pihole.service
+fi
