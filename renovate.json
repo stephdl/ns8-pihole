@@ -6,9 +6,10 @@
     {
       "fileMatch": ["build-images.sh"],
       "matchStrings": [
-        "\\bdocker\\.io/pihole/pihole::(?<currentValue>[-0-9\\.a-z]+)"
+        "docker\\.io/pihole/pihole:(?<currentValue>[-0-9\\.a-z]+)"
       ],
-      "datasourceTemplate": "docker"
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "pihole/pihole"
     }
   ]
 }
