@@ -27,7 +27,7 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/pihole-app.pid \
     --env VIRTUAL_HOST="${TRAEFIK_HOST}" \
     --env IPv6="true" \
     --env dns="1.1.1.1" \
-    --env DNSMASQ_LISTENING="all" \
+    --env FTLCONF_dns_listeningMode="all" \
     --env=PIHOLE_* \
     ${PIHOLE_IMAGE}
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/pihole-app.ctr-id -t 10
