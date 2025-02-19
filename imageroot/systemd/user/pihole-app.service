@@ -23,12 +23,11 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/pihole-app.pid \
     --pod-id-file %t/pihole.pod-id --replace -d --name  pihole-app \
     --volume etc:/etc \
     --env TZ="UTC" \
-    --env WEBPASSWORD="${WEBPASSWORD}" \
+    --env FTLCONF_webserver_api_password="${WEBPASSWORD}" \
     --env VIRTUAL_HOST="${TRAEFIK_HOST}" \
     --env IPv6="true" \
-    --env dns="127.0.0.1" \
     --env dns="1.1.1.1" \
-    --env DNSMASQ_LISTENING="local" \
+    --env DNSMASQ_LISTENING="all" \
     --env=PIHOLE_* \
     ${PIHOLE_IMAGE}
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/pihole-app.ctr-id -t 10

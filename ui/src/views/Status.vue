@@ -385,7 +385,7 @@ export default {
   },
   methods: {
     goToWebapp() {
-      window.open(`https://${this.host}`, "_blank");
+      window.open(`https://${this.host}/admin`, "_blank");
     },
     async getConfiguration() {
       this.loading.getConfiguration = true;
