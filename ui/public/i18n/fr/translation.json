@@ -1,0 +1,77 @@
+{
+  "common": {
+    "required": "Requis",
+    "work_in_progress": "Travail en cours",
+    "processing": "Traitement..."
+  },
+  "status": {
+    "title": "Statut",
+    "app_instance": "Instance de l'application",
+    "services": "Service | Services",
+    "app_images": "Image de l'application | Images de l'application",
+    "app_volumes": "Volume de l'application | Volumes de l'application",
+    "installation_node": "Nœud d'installation",
+    "node": "Nœud",
+    "name": "Nom",
+    "size": "Taille",
+    "created": "Créé",
+    "mount": "Monter",
+    "no_services": "Aucun service",
+    "no_images": "Aucune image",
+    "no_volumes": "Aucun volume",
+    "pihole_webapp": "Application web pihole",
+    "not_configured": "Non configuré",
+    "open_webapp": "Ouvrir pihole",
+    "configure": "Configurer"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "configure_instance": "Configurer {instance}",
+    "save": "Sauvegarder",
+    "pihole_fqdn": "Nom d'hôte Pihole (FQDN)",
+    "lets_encrypt": "Demander un certificat LE",
+    "http_to_https": "Forcer HTTPS",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "advanced": "Avancé",
+    "configuring": "En cours de configuration",
+    "instance_configuration": "Configurer pihole",
+    "domain_already_used_in_traefik": "Le domaine est déjà utilisé dans traefik",
+    "host_pattern": "Doit être un nom de domaine pleinement qualifié valide",
+    "host_format": "Doit être un nom de domaine pleinement qualifié valide",
+    "auth_password": "Mot de passe",
+    "no_dhcp_server": "La fonctionnalité DHCP de Pi-hole est désactivée.",
+    "no_dhcp_server_description": "La fonctionnalité DHCP de Pihole ne peut pas être utilisée. L'adresse IP du serveur exécutant Pihole doit être attribuée en tant que serveur DNS par un autre serveur DHCP. Assurez-vous que le serveur DHCP de votre réseau est configuré pour distribuer cette adresse IP afin que Pihole fonctionne comme un serveur DNS.",
+    "dns_server_is_running": "Un serveur DNS fonctionne",
+    "dns_server_is_running_description": "Vous ne pouvez pas configurer Pihole si un serveur DNS fonctionne déjà sur ce nœud. Un module comme samba, dnsmasq ou une autre instance Pihole peut utiliser le port DNS."
+  },
+  "about": {
+    "title": "À propos"
+  },
+  "task": {
+    "cannot_create_task": "Impossible de créer la tâche {action}"
+  },
+  "action": {
+    "get-status": "Obtenir le statut",
+    "get-configuration": "Obtenir la configuration",
+    "configure-module": "Configurer le module",
+    "get-module-info": "Obtenir les informations du module",
+    "get-name": "Obtenir le nom",
+    "list-backup-repositories": "Lister les dépôts de sauvegarde",
+    "list-backups": "Lister les sauvegardes",
+    "list-installed-modules": "Lister les modules installés"
+  },
+  "error": {
+    "error": "Erreur",
+    "generic_error": "Quelque chose a mal tourné",
+    "validation_error": "Erreur de validation",
+    "network_error": "Erreur réseau",
+    "network_timeout": "Délai d'attente réseau",
+    "401": "Authentification invalide",
+    "403": "Opération non autorisée",
+    "404": "Ressource introuvable",
+    "cannot_retrieve_module_info": "Impossible de récupérer les informations du module",
+    "cannot_retrieve_installed_modules": "Impossible de récupérer les modules installés",
+    "cannot_retrieve_configuration": "Impossible de récupérer la configuration"
+  }
+}
