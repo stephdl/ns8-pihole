@@ -1,57 +1,77 @@
 {
-    "common": {
-        "required": "Obbligatorio",
-        "processing": "Elaborazione in corso...",
-        "work_in_progress": "In lavorazione"
-    },
-    "status": {
-        "node": "Nodo",
-        "services": "Servizio | Servizi",
-        "no_volumes": "Nessun volume",
-        "title": "Stato",
-        "name": "Nome",
-        "size": "Dimensione",
-        "created": "Creato",
-        "no_services": "Nessun servizio",
-        "no_images": "Nessuna immagine",
-        "app_images": "Immagine app|Immagini app",
-        "app_instance": "Istanza app",
-        "app_volumes": "Volume app|Volumi app",
-        "installation_node": "Nodo",
-        "mount": "Percorso di mount"
-    },
-    "settings": {
-        "save": "Salva",
-        "title": "Impostazioni",
-        "configure_instance": "Configura {instance}",
-        "test_field": "Campo di test"
-    },
-    "error": {
-        "error": "Errore",
-        "404": "Risorsa non trovata",
-        "validation_error": "Errore di validazione",
-        "network_error": "Errore di rete",
-        "cannot_retrieve_installed_modules": "Impossibile elencare moduli installati",
-        "cannot_retrieve_module_info": "Impossibile recuperare info modulo",
-        "network_timeout": "Timeout di rete",
-        "generic_error": "Qualcosa è andato storto",
-        "401": "Autenticazione non valida",
-        "403": "Operazione non autorizzata"
-    },
-    "action": {
-        "configure-module": "Configura modulo",
-        "get-configuration": "Visualizza configurazione",
-        "get-status": "Visualizza stato",
-        "get-module-info": "Visualizza info modulo",
-        "get-name": "Visualizza nome",
-        "list-backup-repositories": "Elenca repository di backup",
-        "list-backups": "Elenca backup",
-        "list-installed-modules": "Elenco moduli installati"
-    },
-    "task": {
-        "cannot_create_task": "Impossibile eseguire task {action}"
-    },
-    "about": {
-        "title": "Informazioni"
-    }
+  "common": {
+    "required": "Richiesto",
+    "work_in_progress": "Lavoro in corso",
+    "processing": "Elaborazione..."
+  },
+  "status": {
+    "title": "Stato",
+    "app_instance": "Istanza dell'applicazione",
+    "services": "Servizio | Servizi",
+    "app_images": "Immagine dell'app | Immagini dell'app",
+    "app_volumes": "Volume dell'app | Volumi dell'app",
+    "installation_node": "Nodo di installazione",
+    "node": "Nodo",
+    "name": "Nome",
+    "size": "Dimensione",
+    "created": "Creato",
+    "mount": "Montare",
+    "no_services": "Nessun servizio",
+    "no_images": "Nessuna immagine",
+    "no_volumes": "Nessun volume",
+    "pihole_webapp": "App web pihole",
+    "not_configured": "Non configurato",
+    "open_webapp": "Apri pihole",
+    "configure": "Configura"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "configure_instance": "Configura {instance}",
+    "save": "Salva",
+    "pihole_fqdn": "Nome host pihole (FQDN)",
+    "lets_encrypt": "Richiedi certificato LE",
+    "http_to_https": "Forza HTTPS",
+    "enabled": "Abilitato",
+    "disabled": "Disabilitato",
+    "advanced": "Avanzate",
+    "configuring": "Configurazione in corso",
+    "instance_configuration": "Configura pihole",
+    "domain_already_used_in_traefik": "Dominio già utilizzato in traefik",
+    "host_pattern": "Deve essere un nome di dominio completamente qualificato valido",
+    "host_format": "Deve essere un nome di dominio completamente qualificato valido",
+    "auth_password": "Password",
+    "no_dhcp_server": "La funzione DHCP di Pi-hole è disabilitata.",
+    "no_dhcp_server_description": "La funzione DHCP di Pihole non può essere utilizzata. L'indirizzo IP del server che esegue Pihole deve essere assegnato come server DNS da un altro server DHCP. Assicurati che il server DHCP della tua rete sia configurato per distribuire questo indirizzo IP affinché Pihole funzioni come un sinkhole DNS.",
+    "dns_server_is_running": "Un server DNS è in esecuzione",
+    "dns_server_is_running_description": "Non puoi configurare Pihole se un server DNS è già in esecuzione su questo nodo. Un modulo come Samba, dnsmasq o un'altra istanza di Pihole potrebbe essere in uso sulla porta DNS."
+  },
+  "about": {
+    "title": "Informazioni"
+  },
+  "task": {
+    "cannot_create_task": "Impossibile creare il task {action}"
+  },
+  "action": {
+    "get-status": "Ottieni stato",
+    "get-configuration": "Ottieni configurazione",
+    "configure-module": "Configura modulo",
+    "get-module-info": "Ottieni informazioni del modulo",
+    "get-name": "Ottieni nome",
+    "list-backup-repositories": "Elenco dei repository di backup",
+    "list-backups": "Elenco dei backup",
+    "list-installed-modules": "Elenco dei moduli installati"
+  },
+  "error": {
+    "error": "Errore",
+    "generic_error": "Qualcosa è andato storto",
+    "validation_error": "Errore di validazione",
+    "network_error": "Errore di rete",
+    "network_timeout": "Timeout di rete",
+    "401": "Autenticazione non valida",
+    "403": "Operazione non autorizzata",
+    "404": "Risorsa non trovata",
+    "cannot_retrieve_module_info": "Impossibile recuperare le informazioni del modulo",
+    "cannot_retrieve_installed_modules": "Impossibile recuperare i moduli installati",
+    "cannot_retrieve_configuration": "Impossibile recuperare la configurazione"
+  }
 }

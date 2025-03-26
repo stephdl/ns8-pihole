@@ -1,57 +1,77 @@
 {
-    "error": {
-        "403": "Eragiketa baimendu gabea",
-        "cannot_retrieve_installed_modules": "Ezin dira instalatutako moduluak berreskuratu",
-        "401": "Autentifikazio baliogabea",
-        "cannot_retrieve_module_info": "Ezin da moduluaren informazioa berreskuratu",
-        "generic_error": "Zerbait okertu da",
-        "error": "Errorea",
-        "network_timeout": "Sarearen denbora-muga",
-        "404": "Baliabidea ez da aurkitu",
-        "network_error": "Sare-errorea",
-        "validation_error": "Balioztatze-errorea"
-    },
-    "settings": {
-        "test_field": "Proba-eremua",
-        "configure_instance": "{instance} konfiguratu",
-        "save": "Gorde",
-        "title": "Ezarpenak"
-    },
-    "common": {
-        "required": "Beharrezkoa",
-        "work_in_progress": "Lanak martxan",
-        "processing": "Prozesatzen..."
-    },
-    "status": {
-        "created": "Sortuta",
-        "size": "Tamaina",
-        "name": "Izena",
-        "no_images": "Irudirik ez",
-        "app_volumes": "Aplikazioaren bolumena | Aplikazioen bolumenak",
-        "services": "Zerbitzua | Zerbitzuak",
-        "app_images": "Aplikazioaren irudia | Aplikazioen irudiak",
-        "no_services": "Zerbitzurik ez",
-        "app_instance": "Aplikazioaren instantzia",
-        "mount": "Muntatu",
-        "title": "Egoera",
-        "installation_node": "Instalazio-nodoa",
-        "node": "Nodoa",
-        "no_volumes": "Bolumenik ez"
-    },
-    "about": {
-        "title": "Honi buruz"
-    },
-    "action": {
-        "list-backup-repositories": "Babeskopien biltegiak ikusi",
-        "get-module-info": "Moduluaren informazioa berreskuratu",
-        "list-installed-modules": "Instalatutako moduluak ikusi",
-        "list-backups": "Babeskopiak ikusi",
-        "get-status": "Egoera berreskuratu",
-        "configure-module": "Modulua konfiguratu",
-        "get-configuration": "Konfigurazioa berreskuratu",
-        "get-name": "Izena berreskuratu"
-    },
-    "task": {
-        "cannot_create_task": "Ezin da zeregina {action} sortu"
-    }
+  "common": {
+    "required": "Beharrezkoa",
+    "work_in_progress": "Lanaren prozesuan",
+    "processing": "Prozesatzen..."
+  },
+  "status": {
+    "title": "Egoera",
+    "app_instance": "Aplikazioaren instancia",
+    "services": "Zerbitzu | Zerbitzuak",
+    "app_images": "Aplikazioaren irudia | Aplikazioaren irudiak",
+    "app_volumes": "Aplikazioaren bolumena | Aplikazioaren bolumenak",
+    "installation_node": "Instalazio nodoa",
+    "node": "Nodoa",
+    "name": "Izena",
+    "size": "Tamaina",
+    "created": "Sortua",
+    "mount": "Monta",
+    "no_services": "Ez dago zerbitzurik",
+    "no_images": "Ez dago irudirik",
+    "no_volumes": "Ez dago bolumenik",
+    "pihole_webapp": "Pihole web aplikazioa",
+    "not_configured": "Ez dago konfiguraturik",
+    "open_webapp": "Ireki pihole",
+    "configure": "Konfiguratu"
+  },
+  "settings": {
+    "title": "Ezarpenak",
+    "configure_instance": "Konfiguratu {instance}",
+    "save": "Gorde",
+    "pihole_fqdn": "Pihole ostalaritza izena (FQDN)",
+    "lets_encrypt": "LE ziurtagiria eskatzea",
+    "http_to_https": "HTTPS behartzea",
+    "enabled": "Aktibatuta",
+    "disabled": "Desaktibatuta",
+    "advanced": "Aurreratua",
+    "configuring": "Konfiguratzen",
+    "instance_configuration": "Pihole konfiguratu",
+    "domain_already_used_in_traefik": "Domeinua Traefik-en erabiltzen ari da",
+    "host_pattern": "Izena domeinu osoko baliozko izena izan behar du",
+    "host_format": "Izena domeinu osoko baliozko izena izan behar du",
+    "auth_password": "Pasahitza",
+    "no_dhcp_server": "Pihole-ren DHCP funtzioa desgaituta dago.",
+    "no_dhcp_server_description": "Pihole-ren DHCP funtzioa ezin da erabili. Pihole-a exekutatzen duen zerbitzariaren IP helbidea beste DHCP zerbitzari batek DNS zerbitzari gisa esleitu behar du. Ziurtatu zure sareko DHCP zerbitzaria konfiguratutako IP helbidea Pihole-ri banatzeko, horrela funtziona dezan DNS zuloa gisa.",
+    "dns_server_is_running": "DNS zerbitzari bat martxan dago",
+    "dns_server_is_running_description": "Ezingo duzu Pihole konfiguratu DNS zerbitzari bat dagoeneko martxan badago nodo honetan. Module bat, hala nola Samba, dnsmasq edo Pihole-ren beste instancia bat, DNS portua erabiltzen ari daiteke."
+  },
+  "about": {
+    "title": "Buruz"
+  },
+  "task": {
+    "cannot_create_task": "Ez da {action} task-a sortu ahal izan"
+  },
+  "action": {
+    "get-status": "Egoera lortu",
+    "get-configuration": "Konfigurazioa lortu",
+    "configure-module": "Modulea konfiguratu",
+    "get-module-info": "Modulearen informazioa lortu",
+    "get-name": "Izena lortu",
+    "list-backup-repositories": "Backup biltegien zerrenda",
+    "list-backups": "Backup-ak zerrendatu",
+    "list-installed-modules": "Instalatutako moduleen zerrenda"
+  },
+  "error": {
+    "error": "Errorea",
+    "generic_error": "Zerbait oker jo da",
+    "validation_error": "Balidazio errorea",
+    "network_error": "Sare errorea",
+    "network_timeout": "Sarearen denbora gainditua",
+    "401": "Autentifikazio baliogabea",
+    "403": "Eragiketa ez dago baimenduta",
+    "404": "Erresursak ez dira aurkitu",
+    "cannot_retrieve_module_info": "Ezingo da modulearen informazioa lortu",
+    "cannot_retrieve_installed_modules": "Ezingo da instalatutako moduleak lortu",
+    "cannot_retrieve_configuration": "Ezingo da konfigurazioa lortu"
+  }
 }
