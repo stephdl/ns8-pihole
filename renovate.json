@@ -1,15 +1,6 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
-  "ignorePaths": ["**/ui/**", "**/.devcontainer/**"],
-  "regexManagers": [
-    {
-      "fileMatch": ["build-images.sh"],
-      "matchStrings": [
-        "docker\\.io/pihole/pihole:(?<currentValue>[-0-9\\.a-z]+)"
-      ],
-      "datasourceTemplate": "docker",
-      "depNameTemplate": "pihole/pihole"
-    }
-  ]
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "local>NethServer/.github:ns8"
+    ]
 }
