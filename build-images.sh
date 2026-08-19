@@ -40,7 +40,7 @@ buildah config --entrypoint=/ \
     --label="org.nethserver.max-per-node=1" \
     --label="org.nethserver.tcp-ports-demand=1" \
     --label="org.nethserver.rootfull=0" \
-    --label="org.nethserver.images=docker.io/pihole/pihole:2026.05.0" \
+    --label="org.nethserver.images=docker.io/pihole/pihole:2026.07.2" \
     --label="org.nethserver.min-core=3.20.1" \
     "${container}"
 # Commit the image
