@@ -1,11 +1,7 @@
 name: "Test module on QEMU"
 
 # Self-contained alternative to test-module.yml, which needs the Nethesis
-# DigitalOcean infrastructure. Same chaining as that workflow: it waits for
-# "Publish images" to succeed and tests the image it published, so a broken
-# build never spends twenty runner minutes proving it is broken.
-#
-# The job itself lives in stephdl/ns8-ci-actions.
+# DigitalOcean infrastructure. The job lives in stephdl/ns8-ci-actions.
 
 on:
   workflow_run:
@@ -19,8 +15,7 @@ on:
         default: false
         type: boolean
 
-# github.ref is the default branch under workflow_run, so keying the group on it
-# would put every branch in one group and have them cancel each other.
+# github.ref is the default branch under workflow_run, so it cannot key this.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch || github.ref }}
   cancel-in-progress: true
@@ -42,6 +37,4 @@ jobs:
       image_url: ${{ needs.module.outputs.image }}
       repo_ref: ${{ needs.module.outputs.sha }}
       version_tag: ${{ needs.module.outputs.tag }}
-      # pihole is a DNS cache and a small PHP interface, the default is plenty.
-      vm_mem: 6144
       debug_shell: ${{ github.event.inputs.debug_shell == 'true' || false }}
