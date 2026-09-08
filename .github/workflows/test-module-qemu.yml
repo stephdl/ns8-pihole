@@ -1,5 +1,10 @@
 name: "Test module on QEMU"
 
+# run-name is evaluated before any job, so it cannot read module-info's outputs
+# and rebuilds the image reference from the event instead. main maps to latest
+# there, the same way module-info maps it.
+run-name: "ghcr.io/${{ github.repository_owner }}/pihole:${{ github.event.workflow_run.head_branch == 'main' && 'latest' || github.event.workflow_run.head_branch || github.ref_name }}"
+
 # Self-contained alternative to test-module.yml, which needs the Nethesis
 # DigitalOcean infrastructure. The job lives in stephdl/ns8-ci-actions.
 
