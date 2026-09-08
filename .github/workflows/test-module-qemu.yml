@@ -1,0 +1,265 @@
+name: "Test module on QEMU"
+
+# Self-contained alternative to test-module.yml, which needs the Nethesis
+# DigitalOcean infrastructure. This one boots a Rocky 9 VM on the runner itself,
+# builds the module image from the current checkout and runs the same Robot
+# suite against it, so it works on any fork and on pull requests.
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      debug_shell:
+        description: "Open a tmate shell when the suite fails"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+env:
+  VM_IP: 192.168.77.10
+  GW_IP: 192.168.77.1
+  SUBNET: 192.168.77.0/24
+  VM_MAC: "52:54:00:12:34:56"
+  BR: ns8br0
+  TAP: ns8tap0
+  VM_DIR: /mnt/ns8vm
+  VM_MEM: 6144
+  SSH_KEYFILE: /home/runner/.ssh/ns8ci
+  ROCKY_IMAGE_URL: "https://dl.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud-Base.latest.x86_64.qcow2"
+  CORE_BRANCH: ns8-stable
+  REGISTRY: 192.168.77.1:5000
+  IMAGE_URL: 192.168.77.1:5000/pihole:ci
+
+jobs:
+  run_tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check runner capacity and KVM
+        run: |
+          set -euo pipefail
+          nproc; free -h; df -h / /mnt
+          # A missing /dev/kvm would silently fall back to TCG emulation, which
+          # turns a 25 minute job into a timeout with no obvious cause.
+          test -e /dev/kvm || { echo "::error::/dev/kvm is missing on this runner"; exit 1; }
+          ls -l /dev/kvm
+
+      - name: Install QEMU, cloud-image and build tooling
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq qemu-system-x86 qemu-utils cloud-image-utils buildah
+          # Ubuntu 24.04 confines unprivileged user namespaces by default, which
+          # rootless buildah and podman both need.
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+
+      - name: Generate the CI SSH key
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          # RSA in PEM form: tests/pythonreq.txt pins paramiko 2.9.2, which needs
+          # rsa-sha2-* to talk to the OpenSSH 8.7 shipped by Rocky 9.
+          ssh-keygen -t rsa -b 4096 -m PEM -N '' -C ns8-ci -f "${SSH_KEYFILE}"
+          cat >> ~/.ssh/config <<EOF
+          Host ns8
+            HostName ${VM_IP}
+            User root
+            IdentityFile ${SSH_KEYFILE}
+            StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
+            BatchMode yes
+            ConnectTimeout 10
+            ServerAliveInterval 30
+            ServerAliveCountMax 20
+            LogLevel ERROR
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: Build the host bridge and NAT
+        run: |
+          set -euxo pipefail
+          sudo modprobe tun
+          sudo sysctl -w net.ipv4.ip_forward=1
+          sudo ip link add name "${BR}" type bridge
+          sudo ip addr add "${GW_IP}/24" dev "${BR}"
+          sudo ip link set "${BR}" up
+          sudo ip tuntap add dev "${TAP}" mode tap user "$USER"
+          sudo ip link set "${TAP}" master "${BR}"
+          sudo ip link set "${TAP}" up
+          sudo chmod 0666 /dev/kvm /dev/net/tun
+          sudo chmod 0666 /dev/vhost-net || true
+          # Docker ships preinstalled on the runners and sets FORWARD to DROP.
+          # Without these the VM boots fine and then cannot reach any registry.
+          sudo iptables -t nat -A POSTROUTING -s "${SUBNET}" ! -d "${SUBNET}" -j MASQUERADE
+          sudo iptables -I FORWARD 1 -i "${BR}" -j ACCEPT
+          sudo iptables -I FORWARD 1 -o "${BR}" -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+      - name: Point the runner podman at the host network namespace
+        run: |
+          set -euo pipefail
+          # test-module.sh runs podman with no --network, so the robot container
+          # would otherwise reach the VM through pasta or slirp4netns depending
+          # on the podman version shipped by the runner image. The throwaway
+          # registry below relies on the same setting to listen on the bridge.
+          mkdir -p ~/.config/containers
+          printf '[containers]\nnetns = "host"\n' > ~/.config/containers/containers.conf
+
+      - name: Build the module image and serve it from a throwaway registry
+        run: |
+          set -euo pipefail
+          podman run -d --name ci-registry docker.io/library/registry:2
+          for i in $(seq 1 30); do
+            curl -fsS "http://${REGISTRY}/v2/" >/dev/null 2>&1 && break
+            sleep 1
+          done
+          curl -fsS "http://${REGISTRY}/v2/" >/dev/null
+          REPOBASE="${REGISTRY}" bash ./build-images.sh
+          buildah push --tls-verify=false "${REGISTRY}/pihole" "docker://${IMAGE_URL}"
+          curl -fsS "http://${REGISTRY}/v2/_catalog"; echo
+
+      - name: Build the cloud-init seed
+        run: |
+          set -euo pipefail
+          sudo mkdir -p "${VM_DIR}"
+          sudo chown "$USER:$USER" "${VM_DIR}"
+          pubkey=$(cat "${SSH_KEYFILE}.pub")
+          for f in user-data network-config meta-data; do
+            sed -e "s|@@SSH_PUBKEY@@|${pubkey}|" \
+                -e "s|@@VM_IP@@|${VM_IP}|" \
+                -e "s|@@GW_IP@@|${GW_IP}|" \
+                -e "s|@@VM_MAC@@|${VM_MAC}|" \
+                ".github/ci/qemu/${f}" > "${VM_DIR}/${f}"
+          done
+          cd "${VM_DIR}"
+          cloud-localds -v --network-config=network-config seed.iso user-data meta-data
+
+      - name: Fetch and grow the Rocky 9 cloud image
+        run: |
+          set -euo pipefail
+          cd "${VM_DIR}"
+          # /mnt, not $HOME: the root filesystem has to keep room for the ~3 GB
+          # robot container image.
+          curl -fsSL --retry 3 --retry-delay 5 -o rocky.qcow2 "${ROCKY_IMAGE_URL}"
+          qemu-img resize rocky.qcow2 30G
+          qemu-img info rocky.qcow2
+
+      - name: Boot the VM
+        run: |
+          set -euo pipefail
+          cd "${VM_DIR}"
+          # cache=unsafe: the guest writes several gigabytes of container layers
+          # and is destroyed at the end of the job, so host-side flushing buys
+          # nothing. virtio-rng avoids entropy stalls during GPG startup.
+          qemu-system-x86_64 \
+            -name ns8-ci \
+            -machine q35,accel=kvm \
+            -cpu host \
+            -smp 4,sockets=1,cores=4,threads=1 \
+            -m "${VM_MEM}" \
+            -display none -monitor none \
+            -serial file:"${VM_DIR}/console.log" \
+            -device virtio-rng-pci \
+            -drive if=virtio,file="${VM_DIR}/rocky.qcow2",format=qcow2,cache=unsafe,discard=unmap \
+            -drive if=virtio,file="${VM_DIR}/seed.iso",format=raw,readonly=on \
+            -netdev tap,id=n0,ifname="${TAP}",script=no,downscript=no,vhost=on \
+            -device virtio-net-pci,netdev=n0,mac="${VM_MAC}" \
+            -daemonize -pidfile "${VM_DIR}/qemu.pid"
+
+      - name: Wait for the VM to be ready
+        run: |
+          set -uo pipefail
+          for i in $(seq 1 120); do
+            timeout 2 bash -c "</dev/tcp/${VM_IP}/22" 2>/dev/null && ok=1 && break
+            sleep 2
+          done
+          if [ "${ok:-0}" != "1" ]; then
+            echo "::error::the guest never opened port 22"
+            tail -n 300 "${VM_DIR}/console.log" || true
+            exit 1
+          fi
+          set -e
+          ssh ns8 'cloud-init status --wait --long'
+          ssh ns8 'systemctl is-system-running --wait || true'
+          # Proves routing, NAT, DNS and the throwaway registry in one second,
+          # instead of discovering a FORWARD DROP later as a pull timeout.
+          ssh ns8 'hostname -f; df -h /; free -m; ip -4 -o addr show; getent hosts registry-1.docker.io'
+          ssh ns8 "curl -fsS http://${REGISTRY}/v2/_catalog; echo"
+
+      - name: Preflight - reach the VM over SSH from inside a container
+        run: |
+          set -euo pipefail
+          podman run --rm -v "$HOME/.ssh:/keys:ro" docker.io/library/alpine:3 sh -c \
+            "apk add --no-cache openssh-client >/dev/null && \
+             ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
+                 -i /keys/ns8ci root@${VM_IP} 'echo CONTAINER_TO_VM_SSH_OK; hostname -f'"
+
+      - name: Install the NS8 core
+        run: |
+          set -euo pipefail
+          ssh ns8 "set -e; cd /root; \
+            curl -fsSL --retry 3 -O https://raw.githubusercontent.com/NethServer/ns8-core/${CORE_BRANCH}/core/install.sh; \
+            bash install.sh"
+
+      - name: Initialise the cluster
+        run: |
+          set -euo pipefail
+          # 10.5.4.0/24 overlaps neither the bridge nor the 10.0.2.0/24 that
+          # slirp4netns uses for its host-loopback entries.
+          ssh ns8 "create-cluster ${VM_IP}:55820 10.5.4.0/24 Nethesis,1234"
+          ssh ns8 'api-cli run list-installed-modules | head -c 400; echo'
+
+      - name: Run the Robot Framework suite
+        id: robot
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          bash ./test-module.sh "${VM_IP}" "${IMAGE_URL}"
+
+      - name: Collect diagnostics
+        if: always()
+        run: |
+          set +e
+          mkdir -p tests/outputs/diag
+          cp "${VM_DIR}/console.log" tests/outputs/diag/qemu-console.log
+          ssh ns8 'journalctl --no-pager -b'                      > tests/outputs/diag/vm-journal.log
+          ssh ns8 'podman images --format "{{.Repository}}:{{.Tag}} {{.Size}}"' \
+                                                                  > tests/outputs/diag/vm-images.txt
+          ssh ns8 'df -h; free -m; systemctl --failed --no-pager' > tests/outputs/diag/vm-state.txt
+          ssh ns8 'for u in $(ls /home 2>/dev/null); do echo "== $u"; \
+                   runagent -m "$u" podman ps -a --format "{{.Names}} {{.Status}}"; \
+                   runagent -m "$u" journalctl --no-pager -n 200 --user; done' \
+                                                                  > tests/outputs/diag/vm-module-pods.txt
+          true
+
+      - name: Upload test outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-outputs
+          path: tests/outputs
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Debug shell
+        if: ${{ steps.robot.outcome == 'failure' && github.event.inputs.debug_shell == 'true' }}
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 30
+        with:
+          limit-access-to-actor: true
+
+      - name: Shut the VM down
+        if: always()
+        run: |
+          ssh ns8 'systemctl poweroff' || true
+          sleep 10
+          kill "$(cat ${VM_DIR}/qemu.pid)" 2>/dev/null || true
+
+      - name: Fail the job if the suite failed
+        if: ${{ steps.robot.outcome == 'failure' }}
+        run: exit 1

@@ -1,0 +1,19 @@
+version: 2
+ethernets:
+  eth0:
+    # Rocky 9 renders this through NetworkManager and renames interfaces, so the
+    # MAC pinned on the QEMU command line is the only stable selector.
+    match:
+      macaddress: "@@VM_MAC@@"
+    dhcp4: false
+    dhcp6: false
+    addresses:
+      - "@@VM_IP@@/24"
+    routes:
+      - to: default
+        via: "@@GW_IP@@"
+    # The bridge runs no resolver: the runner's systemd-resolved only listens on
+    # 127.0.0.53, which the guest cannot reach.
+    nameservers:
+      addresses: [1.1.1.1, 8.8.8.8]
+    mtu: 1500
