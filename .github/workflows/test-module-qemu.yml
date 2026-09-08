@@ -36,7 +36,7 @@ jobs:
       fail-fast: false
       matrix:
         distro: [rocky9, debian13]
-    uses: stephdl/ns8-ci-actions/.github/workflows/test-on-qemu.yml@cache-cloud-image
+    uses: stephdl/ns8-ci-actions/.github/workflows/test-on-qemu.yml@v1
     with:
       distro: ${{ matrix.distro }}
       image_url: ${{ needs.module.outputs.image }}
