@@ -16,6 +16,12 @@ on:
         default: false
         type: boolean
 
+# A new push rebuilds the module image from the new checkout, so a run started
+# on the previous commit is testing code that no longer exists.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
