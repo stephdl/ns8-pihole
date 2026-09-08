@@ -4,6 +4,10 @@ Library    SSHLibrary
 *** Variables ***
 ${TEST_HOST}        pihole.ns8-ci.test
 ${TEST_PASSWORD}    Nethesis,1234
+# Only the prefix: the rest of the title is the container hostname, which
+# podman takes from the pod name.
+${PIHOLE_TITLE}     <title>Pi-hole${SPACE}
+${LOGIN_FORM}       <form id="loginform">
 
 *** Test Cases ***
 Check if pihole is installed correctly
@@ -21,8 +25,8 @@ Check if pihole can be configured
     ...    return_rc=True  return_stdout=False
     Should Be Equal As Integers    ${rc}  0
 
-Check if the pihole virtualhost answers
-    Wait Until Keyword Succeeds    120s    5s    Pihole vhost is reachable
+Check if the pihole virtualhost serves the login page
+    Wait Until Keyword Succeeds    120s    5s    Pihole login page is served
 
 Check if pihole is removed correctly
     ${rc} =    Execute Command    remove-module --no-preserve ${module_id}
@@ -30,11 +34,16 @@ Check if pihole is removed correctly
     Should Be Equal As Integers    ${rc}  0
 
 *** Keywords ***
-Pihole vhost is reachable
+Pihole login page is served
     # configure-module sets a Host-based traefik route with no path prefix, so
-    # the vhost is only reachable with the right Host header. /admin/ rather
-    # than /, which answers 302 before the application is up.
-    ${rc} =    Execute Command
-    ...    curl -fsS -H 'Host: ${TEST_HOST}' http://127.0.0.1/admin/
-    ...    return_rc=True  return_stdout=False
+    # the vhost only answers with the right Host header. /admin/login rather
+    # than /admin/, which is a 302 with an empty body: a status check alone
+    # would pass on it and prove nothing about the application.
+    ${output}  ${rc} =    Execute Command
+    ...    curl -fsS -H 'Host: ${TEST_HOST}' http://127.0.0.1/admin/login
+    ...    return_rc=True
     Should Be Equal As Integers    ${rc}  0
+    # The title proves pihole answered rather than another vhost, the form
+    # proves the interface actually rendered.
+    Should Contain    ${output}    ${PIHOLE_TITLE}
+    Should Contain    ${output}    ${LOGIN_FORM}
