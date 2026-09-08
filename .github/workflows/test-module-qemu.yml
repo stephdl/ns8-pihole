@@ -37,4 +37,7 @@ jobs:
       image_url: ${{ needs.module.outputs.image }}
       repo_ref: ${{ needs.module.outputs.sha }}
       version_tag: ${{ needs.module.outputs.tag }}
+      # Guest RAM in MiB, 8192 by default. Raise it for a module that starts a
+      # JVM or several services at once.
+      # vm_mem: 12288
       debug_shell: ${{ github.event.inputs.debug_shell == 'true' || false }}
