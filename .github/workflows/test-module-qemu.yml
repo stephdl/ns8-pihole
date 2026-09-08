@@ -1,5 +1,10 @@
 name: "Test module on QEMU"
 
+# run-name is evaluated before any job, so it cannot read module-info's outputs
+# and rebuilds the image reference from the event instead. main maps to latest
+# there, the same way module-info maps it.
+run-name: "ghcr.io/${{ github.repository_owner }}/pihole:${{ github.event.workflow_run.head_branch == 'main' && 'latest' || github.event.workflow_run.head_branch || github.ref_name }}"
+
 # Self-contained alternative to test-module.yml, which needs the Nethesis
 # DigitalOcean infrastructure. The job lives in stephdl/ns8-ci-actions.
 
@@ -37,4 +42,7 @@ jobs:
       image_url: ${{ needs.module.outputs.image }}
       repo_ref: ${{ needs.module.outputs.sha }}
       version_tag: ${{ needs.module.outputs.tag }}
+      # Guest RAM in MiB, 8192 by default. The runner has 15360 and needs some
+      # for itself, so 12288 is the practical ceiling.
+      # vm_mem: 12288
       debug_shell: ${{ github.event.inputs.debug_shell == 'true' || false }}
