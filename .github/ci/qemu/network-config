@@ -9,8 +9,10 @@ ethernets:
     dhcp6: false
     addresses:
       - "@@VM_IP@@/24"
+    # cloud-init 24.4 on Rocky 9 rejects netplan's "default" keyword here:
+    # _normalize_route runs the destination through ipaddress and raises.
     routes:
-      - to: default
+      - to: 0.0.0.0/0
         via: "@@GW_IP@@"
     # The bridge runs no resolver: the runner's systemd-resolved only listens on
     # 127.0.0.53, which the guest cannot reach.

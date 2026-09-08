@@ -10,8 +10,10 @@ manage_etc_hosts: false
 disable_root: false
 ssh_pwauth: false
 users:
+  # No lock_passwd here: root has no password, cc_users_groups handles the
+  # password before the keys, and unlocking an empty one raises before the
+  # authorized_keys ever get written.
   - name: root
-    lock_passwd: false
     ssh_authorized_keys:
       - "@@SSH_PUBKEY@@"
 
