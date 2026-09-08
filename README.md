@@ -12,7 +12,7 @@ Using the DHCP server to assign Pi-hole as the DNS is generally the easiest and 
 
 ## Install
 
-Instantiate the module with:
+Instantiate the module with: plop
 
     add-module ghcr.io/nethserver/pihole:latest 1
 
