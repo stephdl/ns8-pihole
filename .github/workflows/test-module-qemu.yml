@@ -24,14 +24,15 @@ jobs:
       repo_ref: ${{ needs.module.outputs.sha }}
       version_tag: knobs
 
-  # Exercises: cloud_image_url, corebranch, script, path
+  # Exercises: cloud_image_url, corebranch, install_args, script, path
   paths:
     needs: module
     uses: stephdl/ns8-ci-actions/.github/workflows/test-on-qemu.yml@drop-dockerhub
     with:
       distro: rocky9
       cloud_image_url: "https://dl.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud-Base.latest.x86_64.qcow2"
-      corebranch: ns8-stable
+      corebranch: 3.22.0-dev.6
+      install_args: ghcr.io/nethserver/core:3.22.0-dev.6
       script: run-tests.sh
       path: subdir
       image_url: ${{ needs.module.outputs.image }}
