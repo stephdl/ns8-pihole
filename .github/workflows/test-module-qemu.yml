@@ -30,7 +30,7 @@ jobs:
       fail-fast: false
       matrix:
         distro: [rocky9, debian13]
-    uses: stephdl/ns8-ci-actions/.github/workflows/test-on-qemu.yml@main
+    uses: stephdl/ns8-ci-actions/.github/workflows/test-on-qemu.yml@v1
     with:
       distro: ${{ matrix.distro }}
       # pihole is a DNS cache and a small PHP interface, the default is plenty.
