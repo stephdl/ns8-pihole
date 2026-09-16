@@ -28,6 +28,46 @@ Check if pihole can be configured
 Check if the pihole virtualhost serves the login page
     Wait Until Keyword Succeeds    120s    5s    Pihole login page is served
 
+Check if pihole configuration reads back
+    ${output}  ${rc} =    Execute Command    api-cli run module/${module_id}/get-configuration --data '{}'
+    ...    return_rc=True
+    Should Be Equal As Integers    ${rc}  0
+    ${config} =    Evaluate    json.loads('''${output}''')    modules=json
+    Should Be Equal    ${config}[host]    ${TEST_HOST}
+    Should Be Equal    ${config}[http2https]    ${FALSE}
+
+Check if the web password stays out of the environment
+    # 10configure_environment_vars writes it to password.env, which the unit
+    # passes to the container: it must not land in state/environment
+    ${output}  ${rc} =    Execute Command
+    ...    runagent -m ${module_id} bash -c 'cat $AGENT_STATE_DIR/environment'
+    ...    return_rc=True
+    Should Be Equal As Integers    ${rc}  0
+    Should Not Contain    ${output}    ${TEST_PASSWORD}
+
+Check if the DNS server answers
+    # The pod publishes 53 on the node: resolving through it is what the module
+    # exists for, and the web interface says nothing about it
+    ${output}  ${rc} =    Execute Command
+    ...    dig +short +time=5 +tries=2 @127.0.0.1 nethserver.org A
+    ...    return_rc=True
+    Should Be Equal As Integers    ${rc}  0
+    Should Match Regexp    ${output}    \\d+\\.\\d+\\.\\d+\\.\\d+
+
+Check if the services are running
+    ${rc} =    Execute Command
+    ...    runagent -m ${module_id} systemctl --user is-active pihole.service pihole-app.service
+    ...    return_rc=True  return_stdout=False
+    Should Be Equal As Integers    ${rc}  0
+
+Check if a configuration without the password is refused
+    # The agent exits 10 on a JSON Schema input validation failure
+    ${errors}  ${rc} =    Execute Command
+    ...    api-cli run module/${module_id}/configure-module --data '{"host":"${TEST_HOST}","http2https":false,"lets_encrypt":false}'
+    ...    return_rc=True
+    Should Be Equal As Integers    ${rc}  10
+    Should Contain    ${errors}    webpassword
+
 Take screenshots of the module pages
     [Documentation]    Capture what cluster-admin shows, for the software center
     ...                entry. Tagged ui: the shared runner skips it unless
